@@ -140,12 +140,14 @@ describe('joining a room', function () {
                     .respond(401, {errcode: 'M_GUEST_ACCESS_FORBIDDEN'});
 
                 return q.all([
-                    httpBackend.flush('/directory/room/'+encodeURIComponent(ROOM_ALIAS)),
-                    httpBackend.flush('/rooms/'+encodeURIComponent(ROOM_ID)+"/initialSync"),
+                    httpBackend.flush('/directory/room/'+encodeURIComponent(ROOM_ALIAS), 1, 200),
+                    httpBackend.flush('/rooms/'+encodeURIComponent(ROOM_ID)+"/initialSync", 1, 200),
                 ]);
             }).then(() => {
                 httpBackend.verifyNoOutstandingExpectation();
 
+                return q.delay(1);
+            }).then(() => {
                 // we should now have a roomview, with a preview bar
                 roomView = ReactTestUtils.findRenderedComponentWithType(
                     matrixChat, RoomView);
